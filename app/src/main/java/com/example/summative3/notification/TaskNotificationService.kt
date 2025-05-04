@@ -19,7 +19,7 @@ class TaskNotificationService(private val context: Context) {
         private const val CHANNEL_ID = "task_reminders"
         private const val CHANNEL_NAME = "Task Reminders"
         private const val CHANNEL_DESCRIPTION = "Notifications for upcoming or due tasks"
-        private const val NOTIFICATION_ID = 1 // You'll likely need to generate unique IDs
+        private const val NOTIFICATION_ID = 1
     }
 
     init {
@@ -33,13 +33,12 @@ class TaskNotificationService(private val context: Context) {
                 description = CHANNEL_DESCRIPTION
             }
             notificationManager.createNotificationChannel(channel)
-            Log.d("NotificationService", "Notification channel created") // Added log
+            Log.d("NotificationService", "Notification channel created")
         }
     }
 
     fun showTaskNotification(taskId: Long, taskTitle: String, taskDescription: String) {
-        Log.d("NotificationService", "showTaskNotification called with ID: $taskId, title: $taskTitle") // Added log
-
+        Log.d("NotificationService", "showTaskNotification called with ID: $taskId, title: $taskTitle")
         val intent = Intent(context, Class.forName("com.example.summative3.MainActivity")).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("task_id", taskId)
@@ -57,9 +56,9 @@ class TaskNotificationService(private val context: Context) {
 
         with(NotificationManagerCompat.from(context)) {
             try {
-                Log.d("NotificationService", "Attempting to notify with ID: $NOTIFICATION_ID") // Added log
+                Log.d("NotificationService", "Attempting to notify with ID: $NOTIFICATION_ID")
                 notify(NOTIFICATION_ID, builder.build())
-                Log.d("NotificationService", "Notification sent successfully") // Added log
+                Log.d("NotificationService", "Notification sent successfully")
             } catch (e: SecurityException) {
                 Log.e("NotificationService", "SecurityException while sending notification: ${e.message}")
             }

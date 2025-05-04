@@ -59,8 +59,8 @@ dependencies {
     implementation(libs.androidx.ui.viewbinding)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
-    implementation(libs.play.services.location) // Use ktx for coroutines support
-    kapt(libs.androidx.room.compiler) // Annotation processor
+    implementation(libs.play.services.location)
+    kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)

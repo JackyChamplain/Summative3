@@ -24,11 +24,9 @@ import com.example.summative3.notification.TaskNotificationService
 
 class EventViewModel(application: Application) : AndroidViewModel(application) {
 
-    // -------- Room DB --------
     private val repository: EventRepository
     val allEvents: Flow<List<Event>>
 
-    // -------- Notification Service --------
     private val notificationService: TaskNotificationService = TaskNotificationService(application.applicationContext)
 
     init {
@@ -42,7 +40,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertEvent(event)
             notificationService.showTaskNotification(
-                taskId = event.id.toLong(),  // Assuming the event has an ID field
+                taskId = event.id.toLong(),
                 taskTitle = event.name,
                 taskDescription = event.description
             )
@@ -71,7 +69,6 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // -------- Address Autocomplete --------
     private val _eventAddress = mutableStateOf(TextFieldValue(""))
     val eventAddress: State<TextFieldValue> = _eventAddress
 
@@ -96,17 +93,16 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
         if (newText.isNotBlank()) {
             predictionJob = viewModelScope.launch(Dispatchers.IO) {
-                delay(300) // debounce
+                delay(300)
                 val placesClient = Places.createClient(context)
 
-                // Create the request for autocomplete predictions
                 val request = FindAutocompletePredictionsRequest.builder()
                     .setQuery(newText)
                     .setSessionToken(token)
                     .setTypeFilter(com.google.android.libraries.places.api.model.TypeFilter.ADDRESS)
                     .build()
 
-                Log.d("Places API", "Request built: $request") // Log the request being sent
+                Log.d("Places API", "Request built: $request")
 
                 placesClient.findAutocompletePredictions(request)
                     .addOnSuccessListener { response ->
@@ -134,7 +130,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
             val placeId = prediction.placeId
             val placeFields = listOf(Place.Field.ADDRESS)
 
-            Log.d("Places API", "Fetching details for placeId: $placeId") // Log place ID
+            Log.d("Places API", "Fetching details for placeId: $placeId")
 
             val request = FetchPlaceRequest.builder(placeId, placeFields)
                 .setSessionToken(token)
@@ -143,7 +139,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
             placesClient.fetchPlace(request)
                 .addOnSuccessListener { response ->
                     response.place?.address?.let { address ->
-                        Log.d("Places API", "Place details found: $address") // Log successful response
+                        Log.d("Places API", "Place details found: $address")
                         onAddressSelected(address)
                     }
                 }
@@ -157,8 +153,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
     fun getFirstEvent(onEventRetrieved: (Event?) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             allEvents.collect { events ->
-                // Get the first event from the list (if available)
-                val firstEvent = events.firstOrNull()  // Returns null if the list is empty
+                val firstEvent = events.firstOrNull()
                 onEventRetrieved(firstEvent)
             }
         }

@@ -85,10 +85,8 @@ fun Events(
                                 updatedEventLocation = event.address
                                 updatedSelectedDate = LocalDate.parse(event.date)
                                 updatedSelectedTime = if (!event.time.contains("AM") && !event.time.contains("PM")) {
-                                    // If time does not contain AM or PM, append "AM" (or "PM" if needed)
                                     LocalTime.parse("${event.time} AM", DateTimeFormatter.ofPattern("hh:mm a"))
                                 } else {
-                                    // If it already contains AM or PM, parse it normally
                                     LocalTime.parse(event.time, DateTimeFormatter.ofPattern("hh:mm a"))
                                 }
                                 showDialog = true

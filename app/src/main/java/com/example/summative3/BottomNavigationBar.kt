@@ -51,7 +51,7 @@ fun BottomNavigationBar(navController: NavController) {
             label = { Text("Map") },
             selected = currentRoute?.startsWith(Routes.MapView.route.substringBefore("/")) == true,
             onClick = {
-                val defaultMapUrl = "https://www.google.com/maps/place/" // Or get the actual address-based URL
+                val defaultMapUrl = "https://www.google.com/maps/place/"
                 navController.navigate(Routes.MapView.route.replace("{mapUrl}", defaultMapUrl)) {
                     popUpTo(navController.graph.startDestinationId) { saveState = true }
                     launchSingleTop = true

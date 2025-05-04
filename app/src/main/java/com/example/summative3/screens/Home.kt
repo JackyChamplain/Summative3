@@ -61,7 +61,6 @@ fun Home(
     var addressSuggestions by remember { mutableStateOf(listOf<String>()) }
     var isLoading by remember { mutableStateOf(false) }
 
-    // Date Picker Dialog
     val datePickerDialog = remember {
         android.app.DatePickerDialog(context).apply {
             setOnDateSetListener { _, year, month, day ->
@@ -70,7 +69,6 @@ fun Home(
         }
     }
 
-    // Time Picker Dialog
     val timePickerDialog = remember {
         android.app.TimePickerDialog(context, { _, hourOfDay, minute ->
             selectedTime = "%02d:%02d".format(hourOfDay, minute)
@@ -132,7 +130,6 @@ fun Home(
             label = { Text("Event Address") },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
-        // Date Picker Button
         OutlinedButton(
             onClick = { datePickerDialog.show() },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
@@ -140,7 +137,6 @@ fun Home(
             Text(text = if (selectedDate.isNotBlank()) "Date: $selectedDate" else "Pick a Date")
         }
 
-        // Time Picker Button
         OutlinedButton(
             onClick = { timePickerDialog.show() },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)

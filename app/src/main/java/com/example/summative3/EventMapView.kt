@@ -36,7 +36,6 @@ fun EventMapView(eventAddress: String) {
         mapView.getMapAsync { googleMap ->
             googleMap.uiSettings.isZoomControlsEnabled = true
 
-            // Geocode the address to get coordinates
             val geocoder = Geocoder(context)
             val addresses = geocoder.getFromLocationName(eventAddress, 1)
             if (!addresses.isNullOrEmpty()) {

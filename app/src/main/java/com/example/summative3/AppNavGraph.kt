@@ -37,7 +37,6 @@ fun AppNavGraph(
             val eventViewModel: EventViewModel = viewModel()
             val context = LocalContext.current
 
-            // Collect the first event (you can also use collectAsState if needed)
             val firstEventState = remember { mutableStateOf<Event?>(null) }
 
             LaunchedEffect(Unit) {
@@ -49,7 +48,6 @@ fun AppNavGraph(
             firstEventState.value?.let { event ->
                 EventMapView(eventAddress = event.address)
             } ?: run {
-                // Optional loading or fallback UI
             }
         }
 

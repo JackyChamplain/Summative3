@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             Summative3Theme {
-                val navController = rememberNavController() // Create a NavHostController
+                val navController = rememberNavController()
                 CornerDrawer(navController = navController)             }
         }
     }

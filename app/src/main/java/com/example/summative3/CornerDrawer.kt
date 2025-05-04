@@ -30,7 +30,7 @@ import java.net.URLEncoder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CornerDrawer(navController: NavHostController) { // Receive NavController as a parameter
+fun CornerDrawer(navController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -132,26 +132,21 @@ fun CornerDrawer(navController: NavHostController) { // Receive NavController as
                         ) { backStackEntry ->
                             val eventViewModel: EventViewModel = viewModel()
 
-                            // Create a state to hold the map URL
                             val mapUrlState = remember { mutableStateOf<String?>(null) }
 
-                            // Get the first event and update the map URL state
                             LaunchedEffect(true) {
                                 eventViewModel.getFirstEvent { event ->
                                     event?.let {
-                                        // Generate map URL using the event address
-                                        mapUrlState.value = it.address // Update the state with the map URL
+                                        mapUrlState.value = it.address
                                     } ?: run {
                                         Log.d("EventViewModel", "No event found!")
                                     }
                                 }
                             }
 
-                            // Check if the map URL is available and pass it to the MapView
                             mapUrlState.value?.let { address ->
                                 EventMapView(eventAddress = address)
                             } ?: run {
-                                // Optionally show a loading or error state while waiting for the map URL
                                 Text("Loading map...")
                             }
                         }
@@ -164,7 +159,6 @@ fun CornerDrawer(navController: NavHostController) { // Receive NavController as
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            // First icon: Navigate to the Events screen
                             IconButton(onClick = {
                                 navController.navigate(Routes.Events.route) {
                                     popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -175,7 +169,6 @@ fun CornerDrawer(navController: NavHostController) { // Receive NavController as
                                 Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Events")
                             }
 
-                            // Second icon: Navigate to the Home screen
                             IconButton(onClick = {
                                 navController.navigate(Routes.Home.route) {
                                     popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -186,7 +179,6 @@ fun CornerDrawer(navController: NavHostController) { // Receive NavController as
                                 Icon(Icons.Filled.Home, contentDescription = "Home")
                             }
 
-                            // Third icon: Navigate to the MapView screen
                             IconButton(onClick = {
                                 val encodedUrl = URLEncoder.encode("https://www.google.com/maps/place/", "UTF-8")
                                 navController.navigate("map/$encodedUrl") {
@@ -198,9 +190,8 @@ fun CornerDrawer(navController: NavHostController) { // Receive NavController as
                                 Icon(Icons.Filled.Place, contentDescription = "Map")
                             }
 
-                            // Fourth icon: Navigate back to the previous screen
                             IconButton(onClick = {
-                                navController.popBackStack() // Navigate back to the previous screen
+                                navController.popBackStack()
                             }) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }

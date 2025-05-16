@@ -9,13 +9,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavType
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.example.summative3.screens.Home
 import com.example.summative3.screens.Events
-import com.example.summative3.screens.MapView
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -40,14 +40,18 @@ fun AppNavGraph(
             val firstEventState = remember { mutableStateOf<Event?>(null) }
 
             LaunchedEffect(Unit) {
+                Log.d("NavigationDebug", "Default start destination: ${navController.graph.startDestinationRoute}")
                 eventViewModel.getFirstEvent { firstEvent ->
                     firstEventState.value = firstEvent
                 }
             }
 
             firstEventState.value?.let { event ->
-                EventMapView(eventAddress = event.address)
-            } ?: run {
+                EventMapView(
+                    eventAddress = event.address,
+                    onMapTouch = {}
+                )
+            }?: run {
             }
         }
 

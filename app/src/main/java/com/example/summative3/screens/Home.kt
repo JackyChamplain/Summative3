@@ -1,12 +1,6 @@
 package com.example.summative3.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,47 +10,38 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.summative3.Event
 import com.example.summative3.EventViewModel
-import com.example.summative3.notification.TaskNotificationService
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.summative3.R
-import com.example.summative3.Routes
-import com.google.android.gms.maps.model.LatLng
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
     modifier: Modifier = Modifier,
     navController: NavController,
     eventViewModel: EventViewModel
 ) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
     val context = LocalContext.current
     val placesClient = remember { Places.createClient(context) }
 
-    var newEventName by remember { mutableStateOf("") }
-    var newEventDescription by remember { mutableStateOf("") }
-    var newEventAddress by remember { mutableStateOf("") }
+    var newEventName by rememberSaveable { mutableStateOf("") }
+    var newEventDescription by rememberSaveable { mutableStateOf("") }
+    var newEventAddress by rememberSaveable { mutableStateOf("") }
 
-    var selectedDate by remember { mutableStateOf("") }
-    var selectedTime by remember { mutableStateOf("") }
+    var selectedDate by rememberSaveable { mutableStateOf("") }
+    var selectedTime by rememberSaveable { mutableStateOf("") }
 
     var addressSuggestions by remember { mutableStateOf(listOf<String>()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -105,8 +90,22 @@ fun Home(
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        if (currentRoute != "calculator") {
+                            navController.navigate("calculator") {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                )
+            }
     ) {
-        Text("Add New Event", style = MaterialTheme.typography.headlineMedium)
+        Text("Add New Event", style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 16.dp)
+            .wrapContentWidth(Alignment.CenterHorizontally))
 
         OutlinedTextField(
             value = newEventName,

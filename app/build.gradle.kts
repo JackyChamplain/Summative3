@@ -60,8 +60,15 @@ dependencies {
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.media3.common.ktx)
     kapt(libs.androidx.room.compiler)
 
+    implementation(platform("androidx.compose:compose-bom:2024.03.00"))
+
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-text")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
 

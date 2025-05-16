@@ -158,4 +158,11 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+    fun getAllEvents(onEventsRetrieved: (List<Event>) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            allEvents.collect { events ->
+                onEventsRetrieved(events)
+            }
+        }
+    }
 }

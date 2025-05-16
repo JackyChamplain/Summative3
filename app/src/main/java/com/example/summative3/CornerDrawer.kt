@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,17 +25,30 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.summative3.screens.Events
 import com.example.summative3.screens.Home
+import com.example.summative3.screens.Calculator
 import com.example.summative3.screens.MapView
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CornerDrawer(navController: NavHostController) {
+fun CornerDrawer(
+    navController: NavHostController,
+    initialIsMapTouching: Boolean // Use initial state instead of directly changing val
+) {
+    var isMapTouching by remember { mutableStateOf(initialIsMapTouching) } // Use mutableStateOf for dynamic state
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // Disable drawer gestures if the map is being interacted with
+    val interactionModifier = if (isMapTouching) {
+        Modifier.pointerInput(Unit) {} // Disable touch interactions
+    } else {
+        Modifier // Enable touch interactions
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -87,12 +101,28 @@ fun CornerDrawer(navController: NavHostController) {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-
                             }
                             .padding(vertical = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (currentRoute?.startsWith(Routes.MapView.route.substringBefore("/")) == true) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
+                    Text(
+                        "Calculator",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch { drawerState.close() }
+                                navController.navigate(Routes.Calculator.route) {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                            .padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (currentRoute == Routes.Calculator.route) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+
                 }
             }
         },
@@ -145,12 +175,17 @@ fun CornerDrawer(navController: NavHostController) {
                             }
 
                             mapUrlState.value?.let { address ->
-                                EventMapView(eventAddress = address)
+                                EventMapView(eventAddress = address, onMapTouch = { isTouching ->
+                                    // Update the map interaction state
+                                    isMapTouching = isTouching
+                                })
                             } ?: run {
                                 Text("Loading map...")
                             }
                         }
-
+                        composable(Routes.Calculator.route) {
+                            Calculator(navController = navController)
+                        }
                     }
                 },
                 bottomBar = {
@@ -197,9 +232,9 @@ fun CornerDrawer(navController: NavHostController) {
                             }
                         }
                     }
-
                 }
             )
-        }
+        },
+        modifier = interactionModifier // Apply interaction modifier here
     )
 }
